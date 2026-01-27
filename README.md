@@ -19,45 +19,45 @@ For the official GLFW project, visit [glfw.org](https://www.glfw.org/).
 ## Changelog since 3.4
 
 - Added `GLFW_UNLIMITED_MOUSE_BUTTONS` input mode that allows mouse buttons beyond
-   the limit of the mouse button tokens to be reported (#2423)
-- Added `glfwGetEGLConfig` function to query the `EGLConfig` of a window (#2045)
-- Added `glfwGetGLXFBConfig` function to query the `GLXFBConfig` of a window (#1925)
-- Updated minimum CMake version to 3.16 (#2541)
-- Removed support for building with original MinGW (#2540)
-- [Win32] Removed support for Windows XP and Vista (#2505)
+   the limit of the mouse button tokens to be reported ([#2423](https://github.com/glfw/glfw/pull/2423))
+- Added `glfwGetEGLConfig` function to query the `EGLConfig` of a window ([#2045](https://github.com/glfw/glfw/pull/2045))
+- Added `glfwGetGLXFBConfig` function to query the `GLXFBConfig` of a window ([#1925](https://github.com/glfw/glfw/pull/1925))
+- Updated minimum CMake version to 3.16 ([#2541](https://github.com/glfw/glfw/pull/2541))
+- Removed support for building with original MinGW ([#2540](https://github.com/glfw/glfw/pull/2540))
+- [Win32] Removed support for Windows XP and Vista ([#2505](https://github.com/glfw/glfw/pull/2505))
 - [Cocoa] Added `QuartzCore` framework as link-time dependency
-- [Cocoa] Removed support for OS X 10.10 Yosemite and earlier (#2506)
-- [Wayland] Added window icon support via `glfwSetWindowIcon` (#2686)
+- [Cocoa] Removed support for OS X 10.10 Yosemite and earlier ([#2506](https://github.com/glfw/glfw/pull/2506))
+- [Wayland] Added window icon support via `glfwSetWindowIcon` ([#2686](https://github.com/glfw/glfw/pull/2686))
 - [Wayland] Bugfix: The fractional scaling related objects were not destroyed
-- [Wayland] Bugfix: `glfwInit` would segfault on compositor with no seat (#2517)
+- [Wayland] Bugfix: `glfwInit` would segfault on compositor with no seat ([#2517](https://github.com/glfw/glfw/pull/2517))
 - [Wayland] Bugfix: A drag entering a non-GLFW surface could cause a segfault
-- [Wayland] Bugfix: Ignore key repeat events when no window has keyboard focus (#2727)
-- [Wayland] Bugfix: Reset key repeat timer when window destroyed (#2741,#2727)
+- [Wayland] Bugfix: Ignore key repeat events when no window has keyboard focus ([#2727](https://github.com/glfw/glfw/pull/2727))
+- [Wayland] Bugfix: Reset key repeat timer when window destroyed ([#2741](https://github.com/glfw/glfw/pull/2741)), ([#2727](https://github.com/glfw/glfw/pull/2727))
 - [Wayland] Bugfix: Memory would leak if reading a data offer failed midway
 - [Wayland] Bugfix: Retrieved cursor position would be incorrect when hovering over
                      fallback decorations
 - [Wayland] Bugfix: Fallback decorations would report scroll events
-- [Wayland] Bugfix: Keyboard repeat events halted when any key is released (#2568)
+- [Wayland] Bugfix: Keyboard repeat events halted when any key is released ([#2568](https://github.com/glfw/glfw/pull/2568))
 - [Wayland] Bugfix: Fallback decorations would show menu at wrong position
 - [Wayland] Bugfix: The cursor was not updated when clicking through from
    a modal to a fallback decoration
 - [Wayland] Bugfix: The cursor position was not updated when clicking through
    from a modal to the content area
 - [Wayland] Bugfix: free modules at end of terminate function to resolve
-   potential segmentation fault (#2744)
+   potential segmentation fault ([#2744](https://github.com/glfw/glfw/pull/2744))
 - [Wayland] Bugfix: Confining or disabling the cursor could segfault on
    compositors without `pointer-constraints-unstable-v1`
-- [X11] Bugfix: Running without a WM could trigger an assert (#2593,#2601,#2631)
-- [X11] Bugfix: Occasional crash when an idle display awakes (#2766)
+- [X11] Bugfix: Running without a WM could trigger an assert ([#2593](https://github.com/glfw/glfw/pull/2593)), ([#2601](https://github.com/glfw/glfw/pull/2601)), ([#2631](https://github.com/glfw/glfw/pull/2631))
+- [X11] Bugfix: Occasional crash when an idle display awakes ([#2766](https://github.com/glfw/glfw/pull/2766))
 - [X11] Bugfix: Prevent BadWindow when creating small windows with a content scale
-   less than 1 (#2754)
+   less than 1 ([#2754](https://github.com/glfw/glfw/pull/2754))
 - [X11] Bugfix: Clamp width and height to >= 1 to prevent BadValue error and app exit
-- [X11] Bugfix: Floating windows silently became non-floating when hidden (#2276)
-- [Linux] Bugfix: The header for `ioctl` was only implicitly included (#2778)
+- [X11] Bugfix: Floating windows silently became non-floating when hidden ([#2276](https://github.com/glfw/glfw/pull/2276))
+- [Linux] Bugfix: The header for `ioctl` was only implicitly included ([#2778](https://github.com/glfw/glfw/pull/2778))
 - [Null] Added Vulkan 'window' surface creation via `VK_EXT_headless_surface`
 - [Null] Added EGL context creation on Mesa via `EGL_MESA_platform_surfaceless`
 - [EGL] Allowed native access on Wayland with `GLFW_CONTEXT_CREATION_API` set to
-   `GLFW_NATIVE_CONTEXT_API` (#2518)
+   `GLFW_NATIVE_CONTEXT_API` ([#2518](https://github.com/glfw/glfw/pull/2518))
 
 ## Building This Fork
 
