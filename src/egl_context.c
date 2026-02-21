@@ -32,45 +32,44 @@
 #include <stdlib.h>
 #include <assert.h>
 
-
 // Return a description of the specified EGL error
 //
-static const char* getEGLErrorString(EGLint error)
+static const char *getEGLErrorString(EGLint error)
 {
     switch (error)
     {
-        case EGL_SUCCESS:
-            return "Success";
-        case EGL_NOT_INITIALIZED:
-            return "EGL is not or could not be initialized";
-        case EGL_BAD_ACCESS:
-            return "EGL cannot access a requested resource";
-        case EGL_BAD_ALLOC:
-            return "EGL failed to allocate resources for the requested operation";
-        case EGL_BAD_ATTRIBUTE:
-            return "An unrecognized attribute or attribute value was passed in the attribute list";
-        case EGL_BAD_CONTEXT:
-            return "An EGLContext argument does not name a valid EGL rendering context";
-        case EGL_BAD_CONFIG:
-            return "An EGLConfig argument does not name a valid EGL frame buffer configuration";
-        case EGL_BAD_CURRENT_SURFACE:
-            return "The current surface of the calling thread is a window, pixel buffer or pixmap that is no longer valid";
-        case EGL_BAD_DISPLAY:
-            return "An EGLDisplay argument does not name a valid EGL display connection";
-        case EGL_BAD_SURFACE:
-            return "An EGLSurface argument does not name a valid surface configured for GL rendering";
-        case EGL_BAD_MATCH:
-            return "Arguments are inconsistent";
-        case EGL_BAD_PARAMETER:
-            return "One or more argument values are invalid";
-        case EGL_BAD_NATIVE_PIXMAP:
-            return "A NativePixmapType argument does not refer to a valid native pixmap";
-        case EGL_BAD_NATIVE_WINDOW:
-            return "A NativeWindowType argument does not refer to a valid native window";
-        case EGL_CONTEXT_LOST:
-            return "The application must destroy all contexts and reinitialise";
-        default:
-            return "ERROR: UNKNOWN EGL ERROR";
+    case EGL_SUCCESS:
+        return "Success";
+    case EGL_NOT_INITIALIZED:
+        return "EGL is not or could not be initialized";
+    case EGL_BAD_ACCESS:
+        return "EGL cannot access a requested resource";
+    case EGL_BAD_ALLOC:
+        return "EGL failed to allocate resources for the requested operation";
+    case EGL_BAD_ATTRIBUTE:
+        return "An unrecognized attribute or attribute value was passed in the attribute list";
+    case EGL_BAD_CONTEXT:
+        return "An EGLContext argument does not name a valid EGL rendering context";
+    case EGL_BAD_CONFIG:
+        return "An EGLConfig argument does not name a valid EGL frame buffer configuration";
+    case EGL_BAD_CURRENT_SURFACE:
+        return "The current surface of the calling thread is a window, pixel buffer or pixmap that is no longer valid";
+    case EGL_BAD_DISPLAY:
+        return "An EGLDisplay argument does not name a valid EGL display connection";
+    case EGL_BAD_SURFACE:
+        return "An EGLSurface argument does not name a valid surface configured for GL rendering";
+    case EGL_BAD_MATCH:
+        return "Arguments are inconsistent";
+    case EGL_BAD_PARAMETER:
+        return "One or more argument values are invalid";
+    case EGL_BAD_NATIVE_PIXMAP:
+        return "A NativePixmapType argument does not refer to a valid native pixmap";
+    case EGL_BAD_NATIVE_WINDOW:
+        return "A NativeWindowType argument does not refer to a valid native window";
+    case EGL_CONTEXT_LOST:
+        return "The application must destroy all contexts and reinitialise";
+    default:
+        return "ERROR: UNKNOWN EGL ERROR";
     }
 }
 
@@ -85,13 +84,13 @@ static int getEGLConfigAttrib(EGLConfig config, int attrib)
 
 // Return the EGLConfig most closely matching the specified hints
 //
-static GLFWbool chooseEGLConfig(const _GLFWctxconfig* ctxconfig,
-                                const _GLFWfbconfig* fbconfig,
-                                EGLConfig* result)
+static GLFWbool chooseEGLConfig(const _GLFWctxconfig *ctxconfig,
+                                const _GLFWfbconfig *fbconfig,
+                                EGLConfig *result)
 {
-    EGLConfig* nativeConfigs;
-    _GLFWfbconfig* usableConfigs;
-    const _GLFWfbconfig* closest;
+    EGLConfig *nativeConfigs;
+    _GLFWfbconfig *usableConfigs;
+    const _GLFWfbconfig *closest;
     int i, nativeCount, usableCount, apiBit, surfaceTypeBit;
     GLFWbool wrongApiAvailable = GLFW_FALSE;
 
@@ -129,10 +128,10 @@ static GLFWbool chooseEGLConfig(const _GLFWctxconfig* ctxconfig,
     usableConfigs = _glfw_calloc(nativeCount, sizeof(_GLFWfbconfig));
     usableCount = 0;
 
-    for (i = 0;  i < nativeCount;  i++)
+    for (i = 0; i < nativeCount; i++)
     {
         const EGLConfig n = nativeConfigs[i];
-        _GLFWfbconfig* u = usableConfigs + usableCount;
+        _GLFWfbconfig *u = usableConfigs + usableCount;
 
         // Only consider RGB(A) EGLConfigs
         if (getEGLConfigAttrib(n, EGL_COLOR_BUFFER_TYPE) != EGL_RGB_BUFFER)
@@ -154,7 +153,7 @@ static GLFWbool chooseEGLConfig(const _GLFWctxconfig* ctxconfig,
             if (fbconfig->transparent)
             {
                 int count;
-                XVisualInfo* vis =
+                XVisualInfo *vis =
                     XGetVisualInfo(_glfw.x11.display, VisualIDMask, &vi, &count);
                 if (vis)
                 {
@@ -197,13 +196,13 @@ static GLFWbool chooseEGLConfig(const _GLFWctxconfig* ctxconfig,
         u->samples = getEGLConfigAttrib(n, EGL_SAMPLES);
         u->doublebuffer = fbconfig->doublebuffer;
 
-        u->handle = (uintptr_t) n;
+        u->handle = (uintptr_t)n;
         usableCount++;
     }
 
     closest = _glfwChooseFBConfig(fbconfig, usableConfigs, usableCount);
     if (closest)
-        *result = (EGLConfig) closest->handle;
+        *result = (EGLConfig)closest->handle;
     else
     {
         if (wrongApiAvailable)
@@ -240,7 +239,7 @@ static GLFWbool chooseEGLConfig(const _GLFWctxconfig* ctxconfig,
     return closest != NULL;
 }
 
-static void makeContextCurrentEGL(_GLFWwindow* window)
+static void makeContextCurrentEGL(_GLFWwindow *window)
 {
     if (window)
     {
@@ -272,7 +271,7 @@ static void makeContextCurrentEGL(_GLFWwindow* window)
     _glfwPlatformSetTls(&_glfw.contextSlot, window);
 }
 
-static void swapBuffersEGL(_GLFWwindow* window)
+static void swapBuffersEGL(_GLFWwindow *window)
 {
     if (window != _glfwPlatformGetTls(&_glfw.contextSlot))
     {
@@ -298,9 +297,9 @@ static void swapIntervalEGL(int interval)
     eglSwapInterval(_glfw.egl.display, interval);
 }
 
-static int extensionSupportedEGL(const char* extension)
+static int extensionSupportedEGL(const char *extension)
 {
-    const char* extensions = eglQueryString(_glfw.egl.display, EGL_EXTENSIONS);
+    const char *extensions = eglQueryString(_glfw.egl.display, EGL_EXTENSIONS);
     if (extensions)
     {
         if (_glfwStringInExtensionString(extension, extensions))
@@ -310,34 +309,32 @@ static int extensionSupportedEGL(const char* extension)
     return GLFW_FALSE;
 }
 
-static GLFWglproc getProcAddressEGL(const char* procname)
+static GLFWglproc getProcAddressEGL(const char *procname)
 {
-    _GLFWwindow* window = _glfwPlatformGetTls(&_glfw.contextSlot);
-    assert(window != NULL);
+    const GLFWglproc proc = (GLFWglproc)eglGetProcAddress(procname);
+    if (proc)
+        return proc;
 
-    if (window->context.egl.client)
+    if (!_glfw.egl.KHR_get_all_proc_addresses)
     {
-        GLFWglproc proc = (GLFWglproc)
-            _glfwPlatformGetModuleSymbol(window->context.egl.client, procname);
-        if (proc)
-            return proc;
+        _GLFWwindow *window = _glfwPlatformGetTls(&_glfw.contextSlot);
+        assert(window != NULL);
+
+        return _glfwPlatformGetModuleSymbol(window->context.egl.client, procname);
     }
 
-    return eglGetProcAddress(procname);
+    return NULL;
 }
 
-static void destroyContextEGL(_GLFWwindow* window)
+static void destroyContextEGL(_GLFWwindow *window)
 {
     // NOTE: Do not unload libGL.so.1 while the X11 display is still open,
     //       as it will make XCloseDisplay segfault
     if (_glfw.platform.platformID != GLFW_PLATFORM_X11 ||
         window->context.client != GLFW_OPENGL_API)
     {
-        if (window->context.egl.client)
-        {
-            _glfwPlatformFreeModule(window->context.egl.client);
-            window->context.egl.client = NULL;
-        }
+        _glfwPlatformFreeModule(window->context.egl.client);
+        window->context.egl.client = NULL;
     }
 
     if (window->context.egl.surface)
@@ -353,39 +350,35 @@ static void destroyContextEGL(_GLFWwindow* window)
     }
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 //////                       GLFW internal API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-GLFWAPI char const * _glfw_egl_library = NULL;
-GLFWAPI char const * _glfw_opengles_library = NULL;
+GLFWAPI char const *_glfw_egl_library = NULL;
+GLFWAPI char const *_glfw_opengles_library = NULL;
 
-// Initialize EGL
-//
 GLFWbool _glfwInitEGL(void)
 {
     int i;
-    EGLint* attribs = NULL;
-    const char* extensions;
-    const char* sonames[] =
-    {
+    EGLint *attribs = NULL;
+    const char *extensions;
+    const char *sonames[] =
+        {
 #if defined(_GLFW_EGL_LIBRARY)
-        _GLFW_EGL_LIBRARY,
-#elif defined(_GLFW_WIN32)
-        "libEGL.dll",
-        "EGL.dll",
-#elif defined(_GLFW_COCOA)
-        "libEGL.dylib",
+            _GLFW_EGL_LIBRARY,
+#elif defined(_WIN32)
+            "libEGL.dll",
+            "EGL.dll",
+#elif defined(__APPLE__)
+            "libEGL.dylib",
 #elif defined(__CYGWIN__)
-        "libEGL-1.so",
+            "libEGL-1.so",
 #elif defined(__OpenBSD__) || defined(__NetBSD__)
-        "libEGL.so",
+            "libEGL.so",
 #else
-        "libEGL.so.1",
+            "libEGL.so.1",
 #endif
-        NULL
-    };
+            NULL};
 
     if (_glfw.egl.handle)
         return GLFW_TRUE;
@@ -396,7 +389,7 @@ GLFWbool _glfwInitEGL(void)
     }
     if (!_glfw.egl.handle)
     {
-        for (i = 0;  sonames[i];  i++)
+        for (i = 0; sonames[i]; i++)
         {
             _glfw.egl.handle = _glfwPlatformLoadModule(sonames[i]);
             if (_glfw.egl.handle)
@@ -555,8 +548,6 @@ GLFWbool _glfwInitEGL(void)
     return GLFW_TRUE;
 }
 
-// Terminate EGL
-//
 void _glfwTerminateEGL(void)
 {
     if (_glfw.egl.display)
@@ -566,25 +557,23 @@ void _glfwTerminateEGL(void)
     }
 
     // Free modules only after all wayland termination functions are called
-    if (_glfw.egl.handle && _glfw.platform.platformID != GLFW_PLATFORM_WAYLAND)
+    if (_glfw.platform.platformID != GLFW_PLATFORM_WAYLAND)
     {
         _glfwPlatformFreeModule(_glfw.egl.handle);
         _glfw.egl.handle = NULL;
     }
 }
 
-#define SET_ATTRIB(a, v) \
-{ \
-    assert(((size_t) index + 1) < sizeof(attribs) / sizeof(attribs[0])); \
-    attribs[index++] = a; \
-    attribs[index++] = v; \
-}
+#define SET_ATTRIB(a, v)                                                    \
+    {                                                                       \
+        assert(((size_t)index + 1) < sizeof(attribs) / sizeof(attribs[0])); \
+        attribs[index++] = a;                                               \
+        attribs[index++] = v;                                               \
+    }
 
-// Create the OpenGL or OpenGL ES context
-//
-GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
-                               const _GLFWctxconfig* ctxconfig,
-                               const _GLFWfbconfig* fbconfig)
+GLFWbool _glfwCreateContextEGL(_GLFWwindow *window,
+                               const _GLFWctxconfig *ctxconfig,
+                               const _GLFWfbconfig *fbconfig)
 {
     EGLint attribs[40];
     EGLConfig config;
@@ -774,56 +763,53 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
     if (!_glfw.egl.KHR_get_all_proc_addresses)
     {
         int i;
-        const char** sonames;
-        const char* es1sonames[] =
-        {
+        const char **sonames;
+        const char *es1sonames[] =
+            {
 #if defined(_GLFW_GLESV1_LIBRARY)
-            _GLFW_GLESV1_LIBRARY,
-#elif defined(_GLFW_WIN32)
-            "GLESv1_CM.dll",
-            "libGLES_CM.dll",
-#elif defined(_GLFW_COCOA)
-            "libGLESv1_CM.dylib",
+                _GLFW_GLESV1_LIBRARY,
+#elif defined(_WIN32)
+                "GLESv1_CM.dll",
+                "libGLES_CM.dll",
+#elif defined(__APPLE__)
+                "libGLESv1_CM.dylib",
 #elif defined(__OpenBSD__) || defined(__NetBSD__)
-            "libGLESv1_CM.so",
+                "libGLESv1_CM.so",
 #else
-            "libGLESv1_CM.so.1",
-            "libGLES_CM.so.1",
+                "libGLESv1_CM.so.1",
+                "libGLES_CM.so.1",
 #endif
-            NULL
-        };
-        const char* es2sonames[] =
-        {
+                NULL};
+        const char *es2sonames[] =
+            {
 #if defined(_GLFW_GLESV2_LIBRARY)
-            _GLFW_GLESV2_LIBRARY,
-#elif defined(_GLFW_WIN32)
-            "GLESv2.dll",
-            "libGLESv2.dll",
-#elif defined(_GLFW_COCOA)
-            "libGLESv2.dylib",
+                _GLFW_GLESV2_LIBRARY,
+#elif defined(_WIN32)
+                "GLESv2.dll",
+                "libGLESv2.dll",
+#elif defined(__APPLE__)
+                "libGLESv2.dylib",
 #elif defined(__CYGWIN__)
-            "libGLESv2-2.so",
+                "libGLESv2-2.so",
 #elif defined(__OpenBSD__) || defined(__NetBSD__)
-            "libGLESv2.so",
+                "libGLESv2.so",
 #else
-            "libGLESv2.so.2",
+                "libGLESv2.so.2",
 #endif
-            NULL
-        };
-        const char* glsonames[] =
-        {
+                NULL};
+        const char *glsonames[] =
+            {
 #if defined(_GLFW_OPENGL_LIBRARY)
-            _GLFW_OPENGL_LIBRARY,
-#elif defined(_GLFW_WIN32)
-#elif defined(_GLFW_COCOA)
+                _GLFW_OPENGL_LIBRARY,
+#elif defined(_WIN32)
+#elif defined(__APPLE__)
 #elif defined(__OpenBSD__) || defined(__NetBSD__)
-            "libGL.so",
+                "libGL.so",
 #else
-            "libOpenGL.so.0",
-            "libGL.so.1",
+                "libOpenGL.so.0",
+                "libGL.so.1",
 #endif
-            NULL
-        };
+                NULL};
 
         if (ctxconfig->client == GLFW_OPENGL_ES_API)
         {
@@ -841,7 +827,7 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
         }
         if (!window->context.egl.client)
         {
-            for (i = 0;  sonames[i];  i++)
+            for (i = 0; sonames[i]; i++)
             {
                 // HACK: Match presence of lib prefix to increase chance of finding
                 //       a matching pair in the jungle that is Win32 EGL/GLES
@@ -877,12 +863,12 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
 // Returns the Visual and depth of the chosen EGLConfig
 //
 #if defined(_GLFW_X11)
-GLFWbool _glfwChooseVisualEGL(const _GLFWwndconfig* wndconfig,
-                              const _GLFWctxconfig* ctxconfig,
-                              const _GLFWfbconfig* fbconfig,
-                              Visual** visual, int* depth)
+GLFWbool _glfwChooseVisualEGL(const _GLFWwndconfig *wndconfig,
+                              const _GLFWctxconfig *ctxconfig,
+                              const _GLFWfbconfig *fbconfig,
+                              Visual **visual, int *depth)
 {
-    XVisualInfo* result;
+    XVisualInfo *result;
     XVisualInfo desired;
     EGLConfig native;
     EGLint visualID = 0, count = 0;
@@ -913,7 +899,6 @@ GLFWbool _glfwChooseVisualEGL(const _GLFWwndconfig* wndconfig,
 }
 #endif // _GLFW_X11
 
-
 //////////////////////////////////////////////////////////////////////////
 //////                        GLFW native API                       //////
 //////////////////////////////////////////////////////////////////////////
@@ -924,11 +909,11 @@ GLFWAPI EGLDisplay glfwGetEGLDisplay(void)
     return _glfw.egl.display;
 }
 
-GLFWAPI EGLContext glfwGetEGLContext(GLFWwindow* handle)
+GLFWAPI EGLContext glfwGetEGLContext(GLFWwindow *handle)
 {
     _GLFW_REQUIRE_INIT_OR_RETURN(EGL_NO_CONTEXT);
 
-    _GLFWwindow* window = (_GLFWwindow*) handle;
+    _GLFWwindow *window = (_GLFWwindow *)handle;
     assert(window != NULL);
 
     if (window->context.source != GLFW_EGL_CONTEXT_API)
@@ -944,11 +929,11 @@ GLFWAPI EGLContext glfwGetEGLContext(GLFWwindow* handle)
     return window->context.egl.handle;
 }
 
-GLFWAPI EGLSurface glfwGetEGLSurface(GLFWwindow* handle)
+GLFWAPI EGLSurface glfwGetEGLSurface(GLFWwindow *handle)
 {
     _GLFW_REQUIRE_INIT_OR_RETURN(EGL_NO_SURFACE);
 
-    _GLFWwindow* window = (_GLFWwindow*) handle;
+    _GLFWwindow *window = (_GLFWwindow *)handle;
     assert(window != NULL);
 
     if (window->context.source != GLFW_EGL_CONTEXT_API)
@@ -964,11 +949,11 @@ GLFWAPI EGLSurface glfwGetEGLSurface(GLFWwindow* handle)
     return window->context.egl.surface;
 }
 
-GLFWAPI int glfwGetEGLConfig(GLFWwindow* handle, EGLConfig* config)
+GLFWAPI int glfwGetEGLConfig(GLFWwindow *handle, EGLConfig *config)
 {
     _GLFW_REQUIRE_INIT_OR_RETURN(GLFW_FALSE);
 
-    _GLFWwindow* window = (_GLFWwindow*) handle;
+    _GLFWwindow *window = (_GLFWwindow *)handle;
     assert(window != NULL);
     assert(config != NULL);
 
@@ -985,4 +970,3 @@ GLFWAPI int glfwGetEGLConfig(GLFWwindow* handle, EGLConfig* config)
     *config = window->context.egl.config;
     return GLFW_TRUE;
 }
-

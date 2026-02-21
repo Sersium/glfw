@@ -114,22 +114,21 @@
 #include "xdg-toplevel-icon-v1-client-protocol-code.h"
 #undef types
 
-static void wmBaseHandlePing(void* userData,
-                             struct xdg_wm_base* wmBase,
+static void wmBaseHandlePing(void *userData,
+                             struct xdg_wm_base *wmBase,
                              uint32_t serial)
 {
     xdg_wm_base_pong(wmBase, serial);
 }
 
 static const struct xdg_wm_base_listener wmBaseListener =
-{
-    wmBaseHandlePing
-};
+    {
+        wmBaseHandlePing};
 
-static void registryHandleGlobal(void* userData,
-                                 struct wl_registry* registry,
+static void registryHandleGlobal(void *userData,
+                                 struct wl_registry *registry,
                                  uint32_t name,
-                                 const char* interface,
+                                 const char *interface,
                                  uint32_t version)
 {
     if (strcmp(interface, "wl_compositor") == 0)
@@ -158,15 +157,8 @@ static void registryHandleGlobal(void* userData,
         {
             _glfw.wl.seat =
                 wl_registry_bind(registry, name, &wl_seat_interface,
-                                 _glfw_min(4, version));
+                                 _glfw_min(5, version));
             _glfwAddSeatListenerWayland(_glfw.wl.seat);
-
-            if (wl_seat_get_version(_glfw.wl.seat) >=
-                WL_KEYBOARD_REPEAT_INFO_SINCE_VERSION)
-            {
-                _glfw.wl.keyRepeatTimerfd =
-                    timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK);
-            }
         }
     }
     else if (strcmp(interface, "wl_data_device_manager") == 0)
@@ -261,13 +253,13 @@ static void registryHandleGlobal(void* userData,
     }
 }
 
-static void registryHandleGlobalRemove(void* userData,
-                                       struct wl_registry* registry,
+static void registryHandleGlobalRemove(void *userData,
+                                       struct wl_registry *registry,
                                        uint32_t name)
 {
     for (int i = 0; i < _glfw.monitorCount; ++i)
     {
-        _GLFWmonitor* monitor = _glfw.monitors[i];
+        _GLFWmonitor *monitor = _glfw.monitors[i];
         if (monitor->wl.name == name)
         {
             _glfwInputMonitor(monitor, GLFW_DISCONNECTED, 0);
@@ -276,16 +268,14 @@ static void registryHandleGlobalRemove(void* userData,
     }
 }
 
-
 static const struct wl_registry_listener registryListener =
-{
-    registryHandleGlobal,
-    registryHandleGlobalRemove
-};
+    {
+        registryHandleGlobal,
+        registryHandleGlobalRemove};
 
-void libdecorHandleError(struct libdecor* context,
+void libdecorHandleError(struct libdecor *context,
                          enum libdecor_error error,
-                         const char* message)
+                         const char *message)
 {
     _glfwInputError(GLFW_PLATFORM_ERROR,
                     "Wayland: libdecor error %u: %s",
@@ -293,12 +283,11 @@ void libdecorHandleError(struct libdecor* context,
 }
 
 static const struct libdecor_interface libdecorInterface =
-{
-    libdecorHandleError
-};
+    {
+        libdecorHandleError};
 
-static void libdecorReadyCallback(void* userData,
-                                  struct wl_callback* callback,
+static void libdecorReadyCallback(void *userData,
+                                  struct wl_callback *callback,
                                   uint32_t time)
 {
     _glfw.wl.libdecor.ready = GLFW_TRUE;
@@ -309,9 +298,8 @@ static void libdecorReadyCallback(void* userData,
 }
 
 static const struct wl_callback_listener libdecorReadyListener =
-{
-    libdecorReadyCallback
-};
+    {
+        libdecorReadyCallback};
 
 // Create key code translation tables
 //
@@ -320,126 +308,126 @@ static void createKeyTables(void)
     memset(_glfw.wl.keycodes, -1, sizeof(_glfw.wl.keycodes));
     memset(_glfw.wl.scancodes, -1, sizeof(_glfw.wl.scancodes));
 
-    _glfw.wl.keycodes[KEY_GRAVE]      = GLFW_KEY_GRAVE_ACCENT;
-    _glfw.wl.keycodes[KEY_1]          = GLFW_KEY_1;
-    _glfw.wl.keycodes[KEY_2]          = GLFW_KEY_2;
-    _glfw.wl.keycodes[KEY_3]          = GLFW_KEY_3;
-    _glfw.wl.keycodes[KEY_4]          = GLFW_KEY_4;
-    _glfw.wl.keycodes[KEY_5]          = GLFW_KEY_5;
-    _glfw.wl.keycodes[KEY_6]          = GLFW_KEY_6;
-    _glfw.wl.keycodes[KEY_7]          = GLFW_KEY_7;
-    _glfw.wl.keycodes[KEY_8]          = GLFW_KEY_8;
-    _glfw.wl.keycodes[KEY_9]          = GLFW_KEY_9;
-    _glfw.wl.keycodes[KEY_0]          = GLFW_KEY_0;
-    _glfw.wl.keycodes[KEY_SPACE]      = GLFW_KEY_SPACE;
-    _glfw.wl.keycodes[KEY_MINUS]      = GLFW_KEY_MINUS;
-    _glfw.wl.keycodes[KEY_EQUAL]      = GLFW_KEY_EQUAL;
-    _glfw.wl.keycodes[KEY_Q]          = GLFW_KEY_Q;
-    _glfw.wl.keycodes[KEY_W]          = GLFW_KEY_W;
-    _glfw.wl.keycodes[KEY_E]          = GLFW_KEY_E;
-    _glfw.wl.keycodes[KEY_R]          = GLFW_KEY_R;
-    _glfw.wl.keycodes[KEY_T]          = GLFW_KEY_T;
-    _glfw.wl.keycodes[KEY_Y]          = GLFW_KEY_Y;
-    _glfw.wl.keycodes[KEY_U]          = GLFW_KEY_U;
-    _glfw.wl.keycodes[KEY_I]          = GLFW_KEY_I;
-    _glfw.wl.keycodes[KEY_O]          = GLFW_KEY_O;
-    _glfw.wl.keycodes[KEY_P]          = GLFW_KEY_P;
-    _glfw.wl.keycodes[KEY_LEFTBRACE]  = GLFW_KEY_LEFT_BRACKET;
+    _glfw.wl.keycodes[KEY_GRAVE] = GLFW_KEY_GRAVE_ACCENT;
+    _glfw.wl.keycodes[KEY_1] = GLFW_KEY_1;
+    _glfw.wl.keycodes[KEY_2] = GLFW_KEY_2;
+    _glfw.wl.keycodes[KEY_3] = GLFW_KEY_3;
+    _glfw.wl.keycodes[KEY_4] = GLFW_KEY_4;
+    _glfw.wl.keycodes[KEY_5] = GLFW_KEY_5;
+    _glfw.wl.keycodes[KEY_6] = GLFW_KEY_6;
+    _glfw.wl.keycodes[KEY_7] = GLFW_KEY_7;
+    _glfw.wl.keycodes[KEY_8] = GLFW_KEY_8;
+    _glfw.wl.keycodes[KEY_9] = GLFW_KEY_9;
+    _glfw.wl.keycodes[KEY_0] = GLFW_KEY_0;
+    _glfw.wl.keycodes[KEY_SPACE] = GLFW_KEY_SPACE;
+    _glfw.wl.keycodes[KEY_MINUS] = GLFW_KEY_MINUS;
+    _glfw.wl.keycodes[KEY_EQUAL] = GLFW_KEY_EQUAL;
+    _glfw.wl.keycodes[KEY_Q] = GLFW_KEY_Q;
+    _glfw.wl.keycodes[KEY_W] = GLFW_KEY_W;
+    _glfw.wl.keycodes[KEY_E] = GLFW_KEY_E;
+    _glfw.wl.keycodes[KEY_R] = GLFW_KEY_R;
+    _glfw.wl.keycodes[KEY_T] = GLFW_KEY_T;
+    _glfw.wl.keycodes[KEY_Y] = GLFW_KEY_Y;
+    _glfw.wl.keycodes[KEY_U] = GLFW_KEY_U;
+    _glfw.wl.keycodes[KEY_I] = GLFW_KEY_I;
+    _glfw.wl.keycodes[KEY_O] = GLFW_KEY_O;
+    _glfw.wl.keycodes[KEY_P] = GLFW_KEY_P;
+    _glfw.wl.keycodes[KEY_LEFTBRACE] = GLFW_KEY_LEFT_BRACKET;
     _glfw.wl.keycodes[KEY_RIGHTBRACE] = GLFW_KEY_RIGHT_BRACKET;
-    _glfw.wl.keycodes[KEY_A]          = GLFW_KEY_A;
-    _glfw.wl.keycodes[KEY_S]          = GLFW_KEY_S;
-    _glfw.wl.keycodes[KEY_D]          = GLFW_KEY_D;
-    _glfw.wl.keycodes[KEY_F]          = GLFW_KEY_F;
-    _glfw.wl.keycodes[KEY_G]          = GLFW_KEY_G;
-    _glfw.wl.keycodes[KEY_H]          = GLFW_KEY_H;
-    _glfw.wl.keycodes[KEY_J]          = GLFW_KEY_J;
-    _glfw.wl.keycodes[KEY_K]          = GLFW_KEY_K;
-    _glfw.wl.keycodes[KEY_L]          = GLFW_KEY_L;
-    _glfw.wl.keycodes[KEY_SEMICOLON]  = GLFW_KEY_SEMICOLON;
+    _glfw.wl.keycodes[KEY_A] = GLFW_KEY_A;
+    _glfw.wl.keycodes[KEY_S] = GLFW_KEY_S;
+    _glfw.wl.keycodes[KEY_D] = GLFW_KEY_D;
+    _glfw.wl.keycodes[KEY_F] = GLFW_KEY_F;
+    _glfw.wl.keycodes[KEY_G] = GLFW_KEY_G;
+    _glfw.wl.keycodes[KEY_H] = GLFW_KEY_H;
+    _glfw.wl.keycodes[KEY_J] = GLFW_KEY_J;
+    _glfw.wl.keycodes[KEY_K] = GLFW_KEY_K;
+    _glfw.wl.keycodes[KEY_L] = GLFW_KEY_L;
+    _glfw.wl.keycodes[KEY_SEMICOLON] = GLFW_KEY_SEMICOLON;
     _glfw.wl.keycodes[KEY_APOSTROPHE] = GLFW_KEY_APOSTROPHE;
-    _glfw.wl.keycodes[KEY_Z]          = GLFW_KEY_Z;
-    _glfw.wl.keycodes[KEY_X]          = GLFW_KEY_X;
-    _glfw.wl.keycodes[KEY_C]          = GLFW_KEY_C;
-    _glfw.wl.keycodes[KEY_V]          = GLFW_KEY_V;
-    _glfw.wl.keycodes[KEY_B]          = GLFW_KEY_B;
-    _glfw.wl.keycodes[KEY_N]          = GLFW_KEY_N;
-    _glfw.wl.keycodes[KEY_M]          = GLFW_KEY_M;
-    _glfw.wl.keycodes[KEY_COMMA]      = GLFW_KEY_COMMA;
-    _glfw.wl.keycodes[KEY_DOT]        = GLFW_KEY_PERIOD;
-    _glfw.wl.keycodes[KEY_SLASH]      = GLFW_KEY_SLASH;
-    _glfw.wl.keycodes[KEY_BACKSLASH]  = GLFW_KEY_BACKSLASH;
-    _glfw.wl.keycodes[KEY_ESC]        = GLFW_KEY_ESCAPE;
-    _glfw.wl.keycodes[KEY_TAB]        = GLFW_KEY_TAB;
-    _glfw.wl.keycodes[KEY_LEFTSHIFT]  = GLFW_KEY_LEFT_SHIFT;
+    _glfw.wl.keycodes[KEY_Z] = GLFW_KEY_Z;
+    _glfw.wl.keycodes[KEY_X] = GLFW_KEY_X;
+    _glfw.wl.keycodes[KEY_C] = GLFW_KEY_C;
+    _glfw.wl.keycodes[KEY_V] = GLFW_KEY_V;
+    _glfw.wl.keycodes[KEY_B] = GLFW_KEY_B;
+    _glfw.wl.keycodes[KEY_N] = GLFW_KEY_N;
+    _glfw.wl.keycodes[KEY_M] = GLFW_KEY_M;
+    _glfw.wl.keycodes[KEY_COMMA] = GLFW_KEY_COMMA;
+    _glfw.wl.keycodes[KEY_DOT] = GLFW_KEY_PERIOD;
+    _glfw.wl.keycodes[KEY_SLASH] = GLFW_KEY_SLASH;
+    _glfw.wl.keycodes[KEY_BACKSLASH] = GLFW_KEY_BACKSLASH;
+    _glfw.wl.keycodes[KEY_ESC] = GLFW_KEY_ESCAPE;
+    _glfw.wl.keycodes[KEY_TAB] = GLFW_KEY_TAB;
+    _glfw.wl.keycodes[KEY_LEFTSHIFT] = GLFW_KEY_LEFT_SHIFT;
     _glfw.wl.keycodes[KEY_RIGHTSHIFT] = GLFW_KEY_RIGHT_SHIFT;
-    _glfw.wl.keycodes[KEY_LEFTCTRL]   = GLFW_KEY_LEFT_CONTROL;
-    _glfw.wl.keycodes[KEY_RIGHTCTRL]  = GLFW_KEY_RIGHT_CONTROL;
-    _glfw.wl.keycodes[KEY_LEFTALT]    = GLFW_KEY_LEFT_ALT;
-    _glfw.wl.keycodes[KEY_RIGHTALT]   = GLFW_KEY_RIGHT_ALT;
-    _glfw.wl.keycodes[KEY_LEFTMETA]   = GLFW_KEY_LEFT_SUPER;
-    _glfw.wl.keycodes[KEY_RIGHTMETA]  = GLFW_KEY_RIGHT_SUPER;
-    _glfw.wl.keycodes[KEY_COMPOSE]    = GLFW_KEY_MENU;
-    _glfw.wl.keycodes[KEY_NUMLOCK]    = GLFW_KEY_NUM_LOCK;
-    _glfw.wl.keycodes[KEY_CAPSLOCK]   = GLFW_KEY_CAPS_LOCK;
-    _glfw.wl.keycodes[KEY_PRINT]      = GLFW_KEY_PRINT_SCREEN;
+    _glfw.wl.keycodes[KEY_LEFTCTRL] = GLFW_KEY_LEFT_CONTROL;
+    _glfw.wl.keycodes[KEY_RIGHTCTRL] = GLFW_KEY_RIGHT_CONTROL;
+    _glfw.wl.keycodes[KEY_LEFTALT] = GLFW_KEY_LEFT_ALT;
+    _glfw.wl.keycodes[KEY_RIGHTALT] = GLFW_KEY_RIGHT_ALT;
+    _glfw.wl.keycodes[KEY_LEFTMETA] = GLFW_KEY_LEFT_SUPER;
+    _glfw.wl.keycodes[KEY_RIGHTMETA] = GLFW_KEY_RIGHT_SUPER;
+    _glfw.wl.keycodes[KEY_COMPOSE] = GLFW_KEY_MENU;
+    _glfw.wl.keycodes[KEY_NUMLOCK] = GLFW_KEY_NUM_LOCK;
+    _glfw.wl.keycodes[KEY_CAPSLOCK] = GLFW_KEY_CAPS_LOCK;
+    _glfw.wl.keycodes[KEY_PRINT] = GLFW_KEY_PRINT_SCREEN;
     _glfw.wl.keycodes[KEY_SCROLLLOCK] = GLFW_KEY_SCROLL_LOCK;
-    _glfw.wl.keycodes[KEY_PAUSE]      = GLFW_KEY_PAUSE;
-    _glfw.wl.keycodes[KEY_DELETE]     = GLFW_KEY_DELETE;
-    _glfw.wl.keycodes[KEY_BACKSPACE]  = GLFW_KEY_BACKSPACE;
-    _glfw.wl.keycodes[KEY_ENTER]      = GLFW_KEY_ENTER;
-    _glfw.wl.keycodes[KEY_HOME]       = GLFW_KEY_HOME;
-    _glfw.wl.keycodes[KEY_END]        = GLFW_KEY_END;
-    _glfw.wl.keycodes[KEY_PAGEUP]     = GLFW_KEY_PAGE_UP;
-    _glfw.wl.keycodes[KEY_PAGEDOWN]   = GLFW_KEY_PAGE_DOWN;
-    _glfw.wl.keycodes[KEY_INSERT]     = GLFW_KEY_INSERT;
-    _glfw.wl.keycodes[KEY_LEFT]       = GLFW_KEY_LEFT;
-    _glfw.wl.keycodes[KEY_RIGHT]      = GLFW_KEY_RIGHT;
-    _glfw.wl.keycodes[KEY_DOWN]       = GLFW_KEY_DOWN;
-    _glfw.wl.keycodes[KEY_UP]         = GLFW_KEY_UP;
-    _glfw.wl.keycodes[KEY_F1]         = GLFW_KEY_F1;
-    _glfw.wl.keycodes[KEY_F2]         = GLFW_KEY_F2;
-    _glfw.wl.keycodes[KEY_F3]         = GLFW_KEY_F3;
-    _glfw.wl.keycodes[KEY_F4]         = GLFW_KEY_F4;
-    _glfw.wl.keycodes[KEY_F5]         = GLFW_KEY_F5;
-    _glfw.wl.keycodes[KEY_F6]         = GLFW_KEY_F6;
-    _glfw.wl.keycodes[KEY_F7]         = GLFW_KEY_F7;
-    _glfw.wl.keycodes[KEY_F8]         = GLFW_KEY_F8;
-    _glfw.wl.keycodes[KEY_F9]         = GLFW_KEY_F9;
-    _glfw.wl.keycodes[KEY_F10]        = GLFW_KEY_F10;
-    _glfw.wl.keycodes[KEY_F11]        = GLFW_KEY_F11;
-    _glfw.wl.keycodes[KEY_F12]        = GLFW_KEY_F12;
-    _glfw.wl.keycodes[KEY_F13]        = GLFW_KEY_F13;
-    _glfw.wl.keycodes[KEY_F14]        = GLFW_KEY_F14;
-    _glfw.wl.keycodes[KEY_F15]        = GLFW_KEY_F15;
-    _glfw.wl.keycodes[KEY_F16]        = GLFW_KEY_F16;
-    _glfw.wl.keycodes[KEY_F17]        = GLFW_KEY_F17;
-    _glfw.wl.keycodes[KEY_F18]        = GLFW_KEY_F18;
-    _glfw.wl.keycodes[KEY_F19]        = GLFW_KEY_F19;
-    _glfw.wl.keycodes[KEY_F20]        = GLFW_KEY_F20;
-    _glfw.wl.keycodes[KEY_F21]        = GLFW_KEY_F21;
-    _glfw.wl.keycodes[KEY_F22]        = GLFW_KEY_F22;
-    _glfw.wl.keycodes[KEY_F23]        = GLFW_KEY_F23;
-    _glfw.wl.keycodes[KEY_F24]        = GLFW_KEY_F24;
-    _glfw.wl.keycodes[KEY_KPSLASH]    = GLFW_KEY_KP_DIVIDE;
+    _glfw.wl.keycodes[KEY_PAUSE] = GLFW_KEY_PAUSE;
+    _glfw.wl.keycodes[KEY_DELETE] = GLFW_KEY_DELETE;
+    _glfw.wl.keycodes[KEY_BACKSPACE] = GLFW_KEY_BACKSPACE;
+    _glfw.wl.keycodes[KEY_ENTER] = GLFW_KEY_ENTER;
+    _glfw.wl.keycodes[KEY_HOME] = GLFW_KEY_HOME;
+    _glfw.wl.keycodes[KEY_END] = GLFW_KEY_END;
+    _glfw.wl.keycodes[KEY_PAGEUP] = GLFW_KEY_PAGE_UP;
+    _glfw.wl.keycodes[KEY_PAGEDOWN] = GLFW_KEY_PAGE_DOWN;
+    _glfw.wl.keycodes[KEY_INSERT] = GLFW_KEY_INSERT;
+    _glfw.wl.keycodes[KEY_LEFT] = GLFW_KEY_LEFT;
+    _glfw.wl.keycodes[KEY_RIGHT] = GLFW_KEY_RIGHT;
+    _glfw.wl.keycodes[KEY_DOWN] = GLFW_KEY_DOWN;
+    _glfw.wl.keycodes[KEY_UP] = GLFW_KEY_UP;
+    _glfw.wl.keycodes[KEY_F1] = GLFW_KEY_F1;
+    _glfw.wl.keycodes[KEY_F2] = GLFW_KEY_F2;
+    _glfw.wl.keycodes[KEY_F3] = GLFW_KEY_F3;
+    _glfw.wl.keycodes[KEY_F4] = GLFW_KEY_F4;
+    _glfw.wl.keycodes[KEY_F5] = GLFW_KEY_F5;
+    _glfw.wl.keycodes[KEY_F6] = GLFW_KEY_F6;
+    _glfw.wl.keycodes[KEY_F7] = GLFW_KEY_F7;
+    _glfw.wl.keycodes[KEY_F8] = GLFW_KEY_F8;
+    _glfw.wl.keycodes[KEY_F9] = GLFW_KEY_F9;
+    _glfw.wl.keycodes[KEY_F10] = GLFW_KEY_F10;
+    _glfw.wl.keycodes[KEY_F11] = GLFW_KEY_F11;
+    _glfw.wl.keycodes[KEY_F12] = GLFW_KEY_F12;
+    _glfw.wl.keycodes[KEY_F13] = GLFW_KEY_F13;
+    _glfw.wl.keycodes[KEY_F14] = GLFW_KEY_F14;
+    _glfw.wl.keycodes[KEY_F15] = GLFW_KEY_F15;
+    _glfw.wl.keycodes[KEY_F16] = GLFW_KEY_F16;
+    _glfw.wl.keycodes[KEY_F17] = GLFW_KEY_F17;
+    _glfw.wl.keycodes[KEY_F18] = GLFW_KEY_F18;
+    _glfw.wl.keycodes[KEY_F19] = GLFW_KEY_F19;
+    _glfw.wl.keycodes[KEY_F20] = GLFW_KEY_F20;
+    _glfw.wl.keycodes[KEY_F21] = GLFW_KEY_F21;
+    _glfw.wl.keycodes[KEY_F22] = GLFW_KEY_F22;
+    _glfw.wl.keycodes[KEY_F23] = GLFW_KEY_F23;
+    _glfw.wl.keycodes[KEY_F24] = GLFW_KEY_F24;
+    _glfw.wl.keycodes[KEY_KPSLASH] = GLFW_KEY_KP_DIVIDE;
     _glfw.wl.keycodes[KEY_KPASTERISK] = GLFW_KEY_KP_MULTIPLY;
-    _glfw.wl.keycodes[KEY_KPMINUS]    = GLFW_KEY_KP_SUBTRACT;
-    _glfw.wl.keycodes[KEY_KPPLUS]     = GLFW_KEY_KP_ADD;
-    _glfw.wl.keycodes[KEY_KP0]        = GLFW_KEY_KP_0;
-    _glfw.wl.keycodes[KEY_KP1]        = GLFW_KEY_KP_1;
-    _glfw.wl.keycodes[KEY_KP2]        = GLFW_KEY_KP_2;
-    _glfw.wl.keycodes[KEY_KP3]        = GLFW_KEY_KP_3;
-    _glfw.wl.keycodes[KEY_KP4]        = GLFW_KEY_KP_4;
-    _glfw.wl.keycodes[KEY_KP5]        = GLFW_KEY_KP_5;
-    _glfw.wl.keycodes[KEY_KP6]        = GLFW_KEY_KP_6;
-    _glfw.wl.keycodes[KEY_KP7]        = GLFW_KEY_KP_7;
-    _glfw.wl.keycodes[KEY_KP8]        = GLFW_KEY_KP_8;
-    _glfw.wl.keycodes[KEY_KP9]        = GLFW_KEY_KP_9;
-    _glfw.wl.keycodes[KEY_KPDOT]      = GLFW_KEY_KP_DECIMAL;
-    _glfw.wl.keycodes[KEY_KPEQUAL]    = GLFW_KEY_KP_EQUAL;
-    _glfw.wl.keycodes[KEY_KPENTER]    = GLFW_KEY_KP_ENTER;
-    _glfw.wl.keycodes[KEY_102ND]      = GLFW_KEY_WORLD_2;
+    _glfw.wl.keycodes[KEY_KPMINUS] = GLFW_KEY_KP_SUBTRACT;
+    _glfw.wl.keycodes[KEY_KPPLUS] = GLFW_KEY_KP_ADD;
+    _glfw.wl.keycodes[KEY_KP0] = GLFW_KEY_KP_0;
+    _glfw.wl.keycodes[KEY_KP1] = GLFW_KEY_KP_1;
+    _glfw.wl.keycodes[KEY_KP2] = GLFW_KEY_KP_2;
+    _glfw.wl.keycodes[KEY_KP3] = GLFW_KEY_KP_3;
+    _glfw.wl.keycodes[KEY_KP4] = GLFW_KEY_KP_4;
+    _glfw.wl.keycodes[KEY_KP5] = GLFW_KEY_KP_5;
+    _glfw.wl.keycodes[KEY_KP6] = GLFW_KEY_KP_6;
+    _glfw.wl.keycodes[KEY_KP7] = GLFW_KEY_KP_7;
+    _glfw.wl.keycodes[KEY_KP8] = GLFW_KEY_KP_8;
+    _glfw.wl.keycodes[KEY_KP9] = GLFW_KEY_KP_9;
+    _glfw.wl.keycodes[KEY_KPDOT] = GLFW_KEY_KP_DECIMAL;
+    _glfw.wl.keycodes[KEY_KPEQUAL] = GLFW_KEY_KP_EQUAL;
+    _glfw.wl.keycodes[KEY_KPENTER] = GLFW_KEY_KP_ENTER;
+    _glfw.wl.keycodes[KEY_102ND] = GLFW_KEY_WORLD_2;
 
-    for (int scancode = 0;  scancode < 256;  scancode++)
+    for (int scancode = 0; scancode < 256; scancode++)
     {
         if (_glfw.wl.keycodes[scancode] > 0)
             _glfw.wl.scancodes[_glfw.wl.keycodes[scancode]] = scancode;
@@ -450,16 +438,16 @@ static GLFWbool loadCursorTheme(void)
 {
     int cursorSize = 16;
 
-    const char* sizeString = getenv("XCURSOR_SIZE");
+    const char *sizeString = getenv("XCURSOR_SIZE");
     if (sizeString)
     {
         errno = 0;
         const long cursorSizeLong = strtol(sizeString, NULL, 10);
         if (errno == 0 && cursorSizeLong > 0 && cursorSizeLong < INT_MAX)
-            cursorSize = (int) cursorSizeLong;
+            cursorSize = (int)cursorSizeLong;
     }
 
-    const char* themeName = getenv("XCURSOR_THEME");
+    const char *themeName = getenv("XCURSOR_THEME");
 
     _glfw.wl.cursorTheme = wl_cursor_theme_load(themeName, cursorSize, _glfw.wl.shm);
     if (!_glfw.wl.cursorTheme)
@@ -478,102 +466,100 @@ static GLFWbool loadCursorTheme(void)
     return GLFW_TRUE;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 //////                       GLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-GLFWbool _glfwConnectWayland(int platformID, _GLFWplatform* platform)
+GLFWbool _glfwConnectWayland(int platformID, _GLFWplatform *platform)
 {
     const _GLFWplatform wayland =
-    {
-        .platformID = GLFW_PLATFORM_WAYLAND,
-        .init = _glfwInitWayland,
-        .terminate = _glfwTerminateWayland,
-        .getCursorPos = _glfwGetCursorPosWayland,
-        .setCursorPos = _glfwSetCursorPosWayland,
-        .setCursorMode = _glfwSetCursorModeWayland,
-        .setRawMouseMotion = _glfwSetRawMouseMotionWayland,
-        .rawMouseMotionSupported = _glfwRawMouseMotionSupportedWayland,
-        .createCursor = _glfwCreateCursorWayland,
-        .createStandardCursor = _glfwCreateStandardCursorWayland,
-        .destroyCursor = _glfwDestroyCursorWayland,
-        .setCursor = _glfwSetCursorWayland,
-        .getScancodeName = _glfwGetScancodeNameWayland,
-        .getKeyScancode = _glfwGetKeyScancodeWayland,
-        .setClipboardString = _glfwSetClipboardStringWayland,
-        .getClipboardString = _glfwGetClipboardStringWayland,
-        .updatePreeditCursorRectangle = _glfwUpdatePreeditCursorRectangleWayland,
-        .resetPreeditText = _glfwResetPreeditTextWayland,
-        .setIMEStatus = _glfwSetIMEStatusWayland,
-        .getIMEStatus = _glfwGetIMEStatusWayland,
+        {
+            .platformID = GLFW_PLATFORM_WAYLAND,
+            .init = _glfwInitWayland,
+            .terminate = _glfwTerminateWayland,
+            .getCursorPos = _glfwGetCursorPosWayland,
+            .setCursorPos = _glfwSetCursorPosWayland,
+            .setCursorMode = _glfwSetCursorModeWayland,
+            .setRawMouseMotion = _glfwSetRawMouseMotionWayland,
+            .rawMouseMotionSupported = _glfwRawMouseMotionSupportedWayland,
+            .createCursor = _glfwCreateCursorWayland,
+            .createStandardCursor = _glfwCreateStandardCursorWayland,
+            .destroyCursor = _glfwDestroyCursorWayland,
+            .setCursor = _glfwSetCursorWayland,
+            .getScancodeName = _glfwGetScancodeNameWayland,
+            .getKeyScancode = _glfwGetKeyScancodeWayland,
+            .setClipboardString = _glfwSetClipboardStringWayland,
+            .getClipboardString = _glfwGetClipboardStringWayland,
+            .updatePreeditCursorRectangle = _glfwUpdatePreeditCursorRectangleWayland,
+            .resetPreeditText = _glfwResetPreeditTextWayland,
+            .setIMEStatus = _glfwSetIMEStatusWayland,
+            .getIMEStatus = _glfwGetIMEStatusWayland,
 #if defined(GLFW_BUILD_LINUX_JOYSTICK)
-        .initJoysticks = _glfwInitJoysticksLinux,
-        .terminateJoysticks = _glfwTerminateJoysticksLinux,
-        .pollJoystick = _glfwPollJoystickLinux,
-        .getMappingName = _glfwGetMappingNameLinux,
-        .updateGamepadGUID = _glfwUpdateGamepadGUIDLinux,
+            .initJoysticks = _glfwInitJoysticksLinux,
+            .terminateJoysticks = _glfwTerminateJoysticksLinux,
+            .pollJoystick = _glfwPollJoystickLinux,
+            .getMappingName = _glfwGetMappingNameLinux,
+            .updateGamepadGUID = _glfwUpdateGamepadGUIDLinux,
 #else
-        .initJoysticks = _glfwInitJoysticksNull,
-        .terminateJoysticks = _glfwTerminateJoysticksNull,
-        .pollJoystick = _glfwPollJoystickNull,
-        .getMappingName = _glfwGetMappingNameNull,
-        .updateGamepadGUID = _glfwUpdateGamepadGUIDNull,
+            .initJoysticks = _glfwInitJoysticksNull,
+            .terminateJoysticks = _glfwTerminateJoysticksNull,
+            .pollJoystick = _glfwPollJoystickNull,
+            .getMappingName = _glfwGetMappingNameNull,
+            .updateGamepadGUID = _glfwUpdateGamepadGUIDNull,
 #endif
-        .freeMonitor = _glfwFreeMonitorWayland,
-        .getMonitorPos = _glfwGetMonitorPosWayland,
-        .getMonitorContentScale = _glfwGetMonitorContentScaleWayland,
-        .getMonitorWorkarea = _glfwGetMonitorWorkareaWayland,
-        .getVideoModes = _glfwGetVideoModesWayland,
-        .getVideoMode = _glfwGetVideoModeWayland,
-        .getGammaRamp = _glfwGetGammaRampWayland,
-        .setGammaRamp = _glfwSetGammaRampWayland,
-        .createWindow = _glfwCreateWindowWayland,
-        .destroyWindow = _glfwDestroyWindowWayland,
-        .setWindowTitle = _glfwSetWindowTitleWayland,
-        .setWindowIcon = _glfwSetWindowIconWayland,
-        .getWindowPos = _glfwGetWindowPosWayland,
-        .setWindowPos = _glfwSetWindowPosWayland,
-        .getWindowSize = _glfwGetWindowSizeWayland,
-        .setWindowSize = _glfwSetWindowSizeWayland,
-        .setWindowSizeLimits = _glfwSetWindowSizeLimitsWayland,
-        .setWindowAspectRatio = _glfwSetWindowAspectRatioWayland,
-        .getFramebufferSize = _glfwGetFramebufferSizeWayland,
-        .getWindowFrameSize = _glfwGetWindowFrameSizeWayland,
-        .getWindowContentScale = _glfwGetWindowContentScaleWayland,
-        .iconifyWindow = _glfwIconifyWindowWayland,
-        .restoreWindow = _glfwRestoreWindowWayland,
-        .maximizeWindow = _glfwMaximizeWindowWayland,
-        .showWindow = _glfwShowWindowWayland,
-        .hideWindow = _glfwHideWindowWayland,
-        .requestWindowAttention = _glfwRequestWindowAttentionWayland,
-        .focusWindow = _glfwFocusWindowWayland,
-        .setWindowMonitor = _glfwSetWindowMonitorWayland,
-        .windowFocused = _glfwWindowFocusedWayland,
-        .windowIconified = _glfwWindowIconifiedWayland,
-        .windowVisible = _glfwWindowVisibleWayland,
-        .windowMaximized = _glfwWindowMaximizedWayland,
-        .windowHovered = _glfwWindowHoveredWayland,
-        .framebufferTransparent = _glfwFramebufferTransparentWayland,
-        .getWindowOpacity = _glfwGetWindowOpacityWayland,
-        .setWindowResizable = _glfwSetWindowResizableWayland,
-        .setWindowDecorated = _glfwSetWindowDecoratedWayland,
-        .setWindowFloating = _glfwSetWindowFloatingWayland,
-        .setWindowOpacity = _glfwSetWindowOpacityWayland,
-        .setWindowMousePassthrough = _glfwSetWindowMousePassthroughWayland,
-        .pollEvents = _glfwPollEventsWayland,
-        .waitEvents = _glfwWaitEventsWayland,
-        .waitEventsTimeout = _glfwWaitEventsTimeoutWayland,
-        .postEmptyEvent = _glfwPostEmptyEventWayland,
-        .getEGLPlatform = _glfwGetEGLPlatformWayland,
-        .getEGLNativeDisplay = _glfwGetEGLNativeDisplayWayland,
-        .getEGLNativeWindow = _glfwGetEGLNativeWindowWayland,
-        .getRequiredInstanceExtensions = _glfwGetRequiredInstanceExtensionsWayland,
-        .getPhysicalDevicePresentationSupport = _glfwGetPhysicalDevicePresentationSupportWayland,
-        .createWindowSurface = _glfwCreateWindowSurfaceWayland
-    };
+            .freeMonitor = _glfwFreeMonitorWayland,
+            .getMonitorPos = _glfwGetMonitorPosWayland,
+            .getMonitorContentScale = _glfwGetMonitorContentScaleWayland,
+            .getMonitorWorkarea = _glfwGetMonitorWorkareaWayland,
+            .getVideoModes = _glfwGetVideoModesWayland,
+            .getVideoMode = _glfwGetVideoModeWayland,
+            .getGammaRamp = _glfwGetGammaRampWayland,
+            .setGammaRamp = _glfwSetGammaRampWayland,
+            .createWindow = _glfwCreateWindowWayland,
+            .destroyWindow = _glfwDestroyWindowWayland,
+            .setWindowTitle = _glfwSetWindowTitleWayland,
+            .setWindowIcon = _glfwSetWindowIconWayland,
+            .getWindowPos = _glfwGetWindowPosWayland,
+            .setWindowPos = _glfwSetWindowPosWayland,
+            .getWindowSize = _glfwGetWindowSizeWayland,
+            .setWindowSize = _glfwSetWindowSizeWayland,
+            .setWindowSizeLimits = _glfwSetWindowSizeLimitsWayland,
+            .setWindowAspectRatio = _glfwSetWindowAspectRatioWayland,
+            .getFramebufferSize = _glfwGetFramebufferSizeWayland,
+            .getWindowFrameSize = _glfwGetWindowFrameSizeWayland,
+            .getWindowContentScale = _glfwGetWindowContentScaleWayland,
+            .iconifyWindow = _glfwIconifyWindowWayland,
+            .restoreWindow = _glfwRestoreWindowWayland,
+            .maximizeWindow = _glfwMaximizeWindowWayland,
+            .showWindow = _glfwShowWindowWayland,
+            .hideWindow = _glfwHideWindowWayland,
+            .requestWindowAttention = _glfwRequestWindowAttentionWayland,
+            .focusWindow = _glfwFocusWindowWayland,
+            .setWindowMonitor = _glfwSetWindowMonitorWayland,
+            .windowFocused = _glfwWindowFocusedWayland,
+            .windowIconified = _glfwWindowIconifiedWayland,
+            .windowVisible = _glfwWindowVisibleWayland,
+            .windowMaximized = _glfwWindowMaximizedWayland,
+            .windowHovered = _glfwWindowHoveredWayland,
+            .framebufferTransparent = _glfwFramebufferTransparentWayland,
+            .getWindowOpacity = _glfwGetWindowOpacityWayland,
+            .setWindowResizable = _glfwSetWindowResizableWayland,
+            .setWindowDecorated = _glfwSetWindowDecoratedWayland,
+            .setWindowFloating = _glfwSetWindowFloatingWayland,
+            .setWindowOpacity = _glfwSetWindowOpacityWayland,
+            .setWindowMousePassthrough = _glfwSetWindowMousePassthroughWayland,
+            .pollEvents = _glfwPollEventsWayland,
+            .waitEvents = _glfwWaitEventsWayland,
+            .waitEventsTimeout = _glfwWaitEventsTimeoutWayland,
+            .postEmptyEvent = _glfwPostEmptyEventWayland,
+            .getEGLPlatform = _glfwGetEGLPlatformWayland,
+            .getEGLNativeDisplay = _glfwGetEGLNativeDisplayWayland,
+            .getEGLNativeWindow = _glfwGetEGLNativeWindowWayland,
+            .getRequiredInstanceExtensions = _glfwGetRequiredInstanceExtensionsWayland,
+            .getPhysicalDevicePresentationSupport = _glfwGetPhysicalDevicePresentationSupportWayland,
+            .createWindowSurface = _glfwCreateWindowSurfaceWayland};
 
-    void* module = _glfwPlatformLoadModule("libwayland-client.so.0");
+    void *module = _glfwPlatformLoadModule("libwayland-client.so.0");
     if (!module)
     {
         if (platformID == GLFW_PLATFORM_WAYLAND)
@@ -599,7 +585,7 @@ GLFWbool _glfwConnectWayland(int platformID, _GLFWplatform* platform)
         return GLFW_FALSE;
     }
 
-    struct wl_display* display = wl_display_connect(NULL);
+    struct wl_display *display = wl_display_connect(NULL);
     if (!display)
     {
         if (platformID == GLFW_PLATFORM_WAYLAND)
@@ -889,7 +875,17 @@ int _glfwInitWayland(void)
 
     createKeyTables();
 
-    _glfw.wl.xkb.context = xkb_context_new(0);
+    _glfw.wl.keyRepeatTimerfd =
+        timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK);
+    if (_glfw.wl.keyRepeatTimerfd == -1)
+    {
+        _glfwInputError(GLFW_PLATFORM_ERROR,
+                        "Wayland: Failed to create timerfd: %s",
+                        strerror(errno));
+        return GLFW_FALSE;
+    }
+
+    _glfw.wl.xkb.context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
     if (!_glfw.wl.xkb.context)
     {
         _glfwInputError(GLFW_PLATFORM_ERROR,
@@ -1042,38 +1038,16 @@ void _glfwTerminateWayland(void)
 
     // Free modules only after all Wayland termination functions are called
 
-    if (_glfw.egl.handle)
-    {
-        _glfwPlatformFreeModule(_glfw.egl.handle);
-        _glfw.egl.handle = NULL;
-    }
-
-    if (_glfw.wl.libdecor.handle)
-    {
-        _glfwPlatformFreeModule(_glfw.wl.libdecor.handle);
-        _glfw.wl.libdecor.handle = NULL;
-    }
-
-    if (_glfw.wl.egl.handle)
-    {
-        _glfwPlatformFreeModule(_glfw.wl.egl.handle);
-        _glfw.wl.egl.handle = NULL;
-    }
-
-    if (_glfw.wl.xkb.handle)
-    {
-        _glfwPlatformFreeModule(_glfw.wl.xkb.handle);
-        _glfw.wl.xkb.handle = NULL;
-    }
-
-    if (_glfw.wl.cursor.handle)
-    {
-        _glfwPlatformFreeModule(_glfw.wl.cursor.handle);
-        _glfw.wl.cursor.handle = NULL;
-    }
+    _glfwPlatformFreeModule(_glfw.egl.handle);
+    _glfwPlatformFreeModule(_glfw.wl.libdecor.handle);
+    _glfwPlatformFreeModule(_glfw.wl.egl.handle);
+    _glfwPlatformFreeModule(_glfw.wl.xkb.handle);
+    _glfwPlatformFreeModule(_glfw.wl.cursor.handle);
+    _glfwPlatformFreeModule(_glfw.wl.client.handle);
 
     _glfw_free(_glfw.wl.clipboardString);
+
+    memset(&_glfw.wl, 0, sizeof(_glfw.wl));
 }
 
 #endif // _GLFW_WAYLAND
-

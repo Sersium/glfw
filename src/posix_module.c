@@ -46,7 +46,8 @@ void* _glfwPlatformLoadModuleUTF8(const char* path)
 
 void _glfwPlatformFreeModule(void* module)
 {
-    dlclose(module);
+    if (module)
+        dlclose(module);
 }
 
 GLFWproc _glfwPlatformGetModuleSymbol(void* module, const char* name)

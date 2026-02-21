@@ -31,22 +31,21 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define _GLFW_FIND_LOADER    1
+#define _GLFW_FIND_LOADER 1
 #define _GLFW_REQUIRE_LOADER 2
-
 
 //////////////////////////////////////////////////////////////////////////
 //////                       GLFW internal API                      //////
 //////////////////////////////////////////////////////////////////////////
 
 #if !defined(_GLFW_VULKAN_STATIC)
-    GLFWAPI char const * _glfw_vulkan_library = NULL;
+GLFWAPI char const *_glfw_vulkan_library = NULL;
 #endif
 
 GLFWbool _glfwInitVulkan(int mode)
 {
     VkResult err;
-    VkExtensionProperties* ep;
+    VkExtensionProperties *ep;
     PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
     uint32_t i, count;
 
@@ -61,15 +60,17 @@ GLFWbool _glfwInitVulkan(int mode)
         {
             _glfw.vk.handle = _glfwPlatformLoadModuleUTF8(_glfw_vulkan_library);
         }
-        if (!_glfw.vk.handle) {
+        if (!_glfw.vk.handle)
+        {
 #if defined(_GLFW_VULKAN_LIBRARY)
             _glfw.vk.handle = _glfwPlatformLoadModule(_GLFW_VULKAN_LIBRARY);
-#elif defined(_GLFW_WIN32)
+#elif defined(_WIN32)
             _glfw.vk.handle = _glfwPlatformLoadModule("vulkan-1.dll");
 #elif defined(_GLFW_COCOA)
             _glfw.vk.handle = _glfwPlatformLoadModule("libvulkan.1.dylib");
             if (!_glfw.vk.handle)
                 _glfw.vk.handle = _glfwLoadLocalVulkanLoaderCocoa();
+#elif defined(__APPLE__)
 #elif defined(__OpenBSD__) || defined(__NetBSD__)
             _glfw.vk.handle = _glfwPlatformLoadModule("libvulkan.so");
 #else
@@ -136,7 +137,7 @@ GLFWbool _glfwInitVulkan(int mode)
         return GLFW_FALSE;
     }
 
-    for (i = 0;  i < count;  i++)
+    for (i = 0; i < count; i++)
     {
         if (strcmp(ep[i].extensionName, "VK_KHR_surface") == 0)
             _glfw.vk.KHR_surface = GLFW_TRUE;
@@ -167,65 +168,64 @@ GLFWbool _glfwInitVulkan(int mode)
 
 void _glfwTerminateVulkan(void)
 {
-    if (_glfw.vk.handle)
-        _glfwPlatformFreeModule(_glfw.vk.handle);
+    _glfwPlatformFreeModule(_glfw.vk.handle);
+    _glfw.vk.handle = NULL;
 }
 
-const char* _glfwGetVulkanResultString(VkResult result)
+const char *_glfwGetVulkanResultString(VkResult result)
 {
     switch (result)
     {
-        case VK_SUCCESS:
-            return "Success";
-        case VK_NOT_READY:
-            return "A fence or query has not yet completed";
-        case VK_TIMEOUT:
-            return "A wait operation has not completed in the specified time";
-        case VK_EVENT_SET:
-            return "An event is signaled";
-        case VK_EVENT_RESET:
-            return "An event is unsignaled";
-        case VK_INCOMPLETE:
-            return "A return array was too small for the result";
-        case VK_ERROR_OUT_OF_HOST_MEMORY:
-            return "A host memory allocation has failed";
-        case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-            return "A device memory allocation has failed";
-        case VK_ERROR_INITIALIZATION_FAILED:
-            return "Initialization of an object could not be completed for implementation-specific reasons";
-        case VK_ERROR_DEVICE_LOST:
-            return "The logical or physical device has been lost";
-        case VK_ERROR_MEMORY_MAP_FAILED:
-            return "Mapping of a memory object has failed";
-        case VK_ERROR_LAYER_NOT_PRESENT:
-            return "A requested layer is not present or could not be loaded";
-        case VK_ERROR_EXTENSION_NOT_PRESENT:
-            return "A requested extension is not supported";
-        case VK_ERROR_FEATURE_NOT_PRESENT:
-            return "A requested feature is not supported";
-        case VK_ERROR_INCOMPATIBLE_DRIVER:
-            return "The requested version of Vulkan is not supported by the driver or is otherwise incompatible";
-        case VK_ERROR_TOO_MANY_OBJECTS:
-            return "Too many objects of the type have already been created";
-        case VK_ERROR_FORMAT_NOT_SUPPORTED:
-            return "A requested format is not supported on this device";
-        case VK_ERROR_SURFACE_LOST_KHR:
-            return "A surface is no longer available";
-        case VK_SUBOPTIMAL_KHR:
-            return "A swapchain no longer matches the surface properties exactly, but can still be used";
-        case VK_ERROR_OUT_OF_DATE_KHR:
-            return "A surface has changed in such a way that it is no longer compatible with the swapchain";
-        case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR:
-            return "The display used by a swapchain does not use the same presentable image layout";
-        case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
-            return "The requested window is already connected to a VkSurfaceKHR, or to some other non-Vulkan API";
-        case VK_ERROR_VALIDATION_FAILED_EXT:
-            return "A validation layer found an error";
-        default:
-            return "ERROR: UNKNOWN VULKAN ERROR";
+    case VK_SUCCESS:
+        return "Success";
+    case VK_NOT_READY:
+        return "A fence or query has not yet completed";
+    case VK_TIMEOUT:
+        return "A wait operation has not completed in the specified time";
+    case VK_EVENT_SET:
+        return "An event is signaled";
+    case VK_EVENT_RESET:
+        return "An event is unsignaled";
+    case VK_INCOMPLETE:
+        return "A return array was too small for the result";
+    case VK_ERROR_OUT_OF_HOST_MEMORY:
+        return "A host memory allocation has failed";
+    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+        return "A device memory allocation has failed";
+    case VK_ERROR_INITIALIZATION_FAILED:
+        return "Initialization of an object could not be completed for implementation-specific reasons";
+    case VK_ERROR_DEVICE_LOST:
+        return "The logical or physical device has been lost";
+    case VK_ERROR_MEMORY_MAP_FAILED:
+        return "Mapping of a memory object has failed";
+    case VK_ERROR_LAYER_NOT_PRESENT:
+        return "A requested layer is not present or could not be loaded";
+    case VK_ERROR_EXTENSION_NOT_PRESENT:
+        return "A requested extension is not supported";
+    case VK_ERROR_FEATURE_NOT_PRESENT:
+        return "A requested feature is not supported";
+    case VK_ERROR_INCOMPATIBLE_DRIVER:
+        return "The requested version of Vulkan is not supported by the driver or is otherwise incompatible";
+    case VK_ERROR_TOO_MANY_OBJECTS:
+        return "Too many objects of the type have already been created";
+    case VK_ERROR_FORMAT_NOT_SUPPORTED:
+        return "A requested format is not supported on this device";
+    case VK_ERROR_SURFACE_LOST_KHR:
+        return "A surface is no longer available";
+    case VK_SUBOPTIMAL_KHR:
+        return "A swapchain no longer matches the surface properties exactly, but can still be used";
+    case VK_ERROR_OUT_OF_DATE_KHR:
+        return "A surface has changed in such a way that it is no longer compatible with the swapchain";
+    case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR:
+        return "The display used by a swapchain does not use the same presentable image layout";
+    case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
+        return "The requested window is already connected to a VkSurfaceKHR, or to some other non-Vulkan API";
+    case VK_ERROR_VALIDATION_FAILED_EXT:
+        return "A validation layer found an error";
+    default:
+        return "ERROR: UNKNOWN VULKAN ERROR";
     }
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 //////                        GLFW public API                       //////
@@ -237,7 +237,7 @@ GLFWAPI int glfwVulkanSupported(void)
     return _glfwInitVulkan(_GLFW_FIND_LOADER);
 }
 
-GLFWAPI const char** glfwGetRequiredInstanceExtensions(uint32_t* count)
+GLFWAPI const char **glfwGetRequiredInstanceExtensions(uint32_t *count)
 {
     assert(count != NULL);
 
@@ -252,11 +252,11 @@ GLFWAPI const char** glfwGetRequiredInstanceExtensions(uint32_t* count)
         return NULL;
 
     *count = 2;
-    return (const char**) _glfw.vk.extensions;
+    return (const char **)_glfw.vk.extensions;
 }
 
 GLFWAPI GLFWvkproc glfwGetInstanceProcAddress(VkInstance instance,
-                                              const char* procname)
+                                              const char *procname)
 {
     GLFWvkproc proc;
     assert(procname != NULL);
@@ -268,13 +268,13 @@ GLFWAPI GLFWvkproc glfwGetInstanceProcAddress(VkInstance instance,
 
     // NOTE: Vulkan 1.0 and 1.1 vkGetInstanceProcAddr cannot return itself
     if (strcmp(procname, "vkGetInstanceProcAddr") == 0)
-        return (GLFWvkproc) vkGetInstanceProcAddr;
+        return (GLFWvkproc)vkGetInstanceProcAddr;
 
-    proc = (GLFWvkproc) vkGetInstanceProcAddr(instance, procname);
+    proc = (GLFWvkproc)vkGetInstanceProcAddr(instance, procname);
     if (!proc)
     {
         if (_glfw.vk.handle)
-            proc = (GLFWvkproc) _glfwPlatformGetModuleSymbol(_glfw.vk.handle, procname);
+            proc = (GLFWvkproc)_glfwPlatformGetModuleSymbol(_glfw.vk.handle, procname);
     }
 
     return proc;
@@ -305,9 +305,9 @@ GLFWAPI int glfwGetPhysicalDevicePresentationSupport(VkInstance instance,
 }
 
 GLFWAPI VkResult glfwCreateWindowSurface(VkInstance instance,
-                                         GLFWwindow* handle,
-                                         const VkAllocationCallbacks* allocator,
-                                         VkSurfaceKHR* surface)
+                                         GLFWwindow *handle,
+                                         const VkAllocationCallbacks *allocator,
+                                         VkSurfaceKHR *surface)
 {
     assert(surface != NULL);
 
@@ -315,7 +315,7 @@ GLFWAPI VkResult glfwCreateWindowSurface(VkInstance instance,
 
     _GLFW_REQUIRE_INIT_OR_RETURN(VK_ERROR_INITIALIZATION_FAILED);
 
-    _GLFWwindow* window = (_GLFWwindow*) handle;
+    _GLFWwindow *window = (_GLFWwindow *)handle;
     assert(window != NULL);
     assert(instance != VK_NULL_HANDLE);
 
@@ -338,4 +338,3 @@ GLFWAPI VkResult glfwCreateWindowSurface(VkInstance instance,
 
     return _glfw.platform.createWindowSurface(instance, window, allocator, surface);
 }
-

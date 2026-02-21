@@ -3675,8 +3675,6 @@ GLFWAPI Window glfwGetX11Window(GLFWwindow* handle)
 
 GLFWAPI void glfwSetX11SelectionString(const char* string)
 {
-    assert(string != NULL);
-
     _GLFW_REQUIRE_INIT();
 
     if (_glfw.platform.platformID != GLFW_PLATFORM_X11)
@@ -3684,6 +3682,8 @@ GLFWAPI void glfwSetX11SelectionString(const char* string)
         _glfwInputError(GLFW_PLATFORM_UNAVAILABLE, "X11: Platform not initialized");
         return;
     }
+
+    assert(string != NULL);
 
     _glfw_free(_glfw.x11.primarySelectionString);
     _glfw.x11.primarySelectionString = _glfw_strdup(string);
